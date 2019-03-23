@@ -1,0 +1,6 @@
+router:nitrogen.cs.pitt.edu
+port:51886
+neighbors:oxygen.cs.pitt.edu
+router:oxygen.cs.pitt.edu
+port:51668
+neighbors:nitrogen.cs.pitt.edu
