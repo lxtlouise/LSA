@@ -19,6 +19,7 @@ public class PingHandler extends Thread {
                     Router.neighbors.put(neighborID, cost);
                     Router.lsa.neighbors = Router.neighbors;
                 }
+                System.out.println(Router.lsa.neighbors.entrySet());
                 System.out.println("finish process one ping");
             }
 

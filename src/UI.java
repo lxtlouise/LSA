@@ -104,6 +104,7 @@ public class UI {
             ping.destAddress = neighborID;
             ping.destPort = UI.routerList.get(neighborID);
             ping.lsa = Router.lsa;
+            ping.cost = (int) System.currentTimeMillis();
             Socket socket = new Socket(InetAddress.getByName(neighborID), ping.destPort);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject(ping);
