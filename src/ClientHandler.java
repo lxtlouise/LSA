@@ -19,7 +19,7 @@ public class ClientHandler extends Thread{
         while (isRunning()) {
             while (!Router.receiveQueue.isEmpty()) {
                 Packet message = Router.receiveQueue.remove();
-                System.out.println("client handler remove one message fro receive queue");
+                System.out.println("client handler remove one message from receive queue " + message.type + " " + message.srcPort);
                 if (message.type == 0) { //hello
                     Router.helloQueue.add(message);
                 } else if (message.type == 1) { //lsa

@@ -24,6 +24,7 @@ public class ServerThread extends Thread{
                 p.srcPort = clientSocket.getPort();
                 Router.receiveQueue.add(p);
                 System.out.println("recieve queue size: " + clientSocket.getPort() + " " + router.receiveQueue.size());
+//                clientSocket.close();
             } catch (IOException e){
                 e.printStackTrace();
                 break;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -121,7 +122,8 @@ public class UI {
         System.out.println("(3) Add a link");
         System.out.println("(4) Display routing table");
         System.out.println("(5) Ping");
-        System.out.println("(6) Help");
+        System.out.println("(6) Start");
+        System.out.println("(7) Help");
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
@@ -149,6 +151,9 @@ public class UI {
                 Ping(r);
                 break;
             case (6):
+                StartLSA(r);
+                break;
+            case (7):
                 help();
                 break;
         }
@@ -163,5 +168,30 @@ public class UI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void StartLSA(String routerID) throws IOException {
+        List<String> n = neighbors.get(routerID);
+        for (int i = 0; i < n.size(); i++) {
+            Packet lsaMessage = new Packet();
+            String neighborID = n.get(i);
+            lsaMessage.type = 1;
+            lsaMessage.srcAddress = routerID;
+            lsaMessage.destAddress = neighborID;
+            lsaMessage.destPort = UI.routerList.get(neighborID);
+            lsaMessage.lsa = Router.lsa;
+            lsaMessage.cost = (int) System.currentTimeMillis();
+            Socket socket = new Socket(InetAddress.getByName(neighborID), lsaMessage.destPort);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(lsaMessage);
+            if(Router.ackTable.contains(routerID)) {
+                Router.ackTable.get(routerID).remove(routerID);
+                Router.ackTable.get(routerID).put(routerID, "10"); //update to send and wait for ack
+            } else {
+                Router.ackTable.put((routerID), new ConcurrentHashMap<String, String>());
+                Router.ackTable.get(routerID).put(routerID, "10");
+            }
+        }
+        System.out.println("finish send lsa");
     }
 }

@@ -14,7 +14,7 @@ public class Router {
     int port; //listen port
     public static LSA lsa;
     public static ConcurrentHashMap<String, LSA> LSDB;
-    public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> ackTable;
+    public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> ackTable; //<routerID, <neighborID, S/A>>
     public static ConcurrentHashMap<String, Integer> neighbors; //neighborID, cost
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> old_routingTable;
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> new_routingTable;
@@ -43,6 +43,7 @@ public class Router {
             neighbors.put(neighborsName.get(i), Integer.MAX_VALUE);
         }
         lsa = new LSA(routerID, 30000, 0, neighbors);
+        LSDB.put(routerID, lsa);
 
         old_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>(); //<routerID, <neighborID, cost>>
         new_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>();
