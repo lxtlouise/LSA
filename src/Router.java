@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Router {
-    String routerID; //nitrogen.cs.pitt.edu
+    public static String routerID; //nitrogen.cs.pitt.edu
     int port; //listen port
     public static LSA lsa;
     public static ConcurrentHashMap<String, LSA> LSDB;

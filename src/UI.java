@@ -127,7 +127,7 @@ public class UI {
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
-        while (choice < 0 || choice > 6) { // checks for the correct input; if incorrect, loops until valid
+        while (choice < 0 || choice > 7) { // checks for the correct input; if incorrect, loops until valid
             System.out.print("Please, enter a choice within menu options: ");
             choice = Integer.parseInt(reader.nextLine());
         }

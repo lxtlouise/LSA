@@ -104,7 +104,58 @@ public class LSAHandler extends Thread {
                         }
                     }
                 }
+                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
+            }
+
+            try {
+                this.sleep(30000);
+                broadcast();
+                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+    }
+
+    public void broadcast() {
+        List<String> n = UI.neighbors.get(Router.routerID);
+        for (int i = 0; i < n.size(); i++) {
+                String ngID = n.get(i);
+                int ngPort = UI.routerList.get(ngID);
+                try {
+                    Socket lsaForward = new Socket(InetAddress.getByName(ngID), ngPort);
+                    ObjectOutputStream lsaOut = new ObjectOutputStream(lsaForward.getOutputStream());
+                    LSA newlsa = Router.lsa;
+                    newlsa.sequence++;
+                    Router.LSDB.put(Router.routerID, newlsa);
+                    Packet lsaF = new Packet();
+                    lsaF.type = 1;
+                    lsaF.srcAddress = Router.routerID;
+                    lsaF.destAddress = ngID;
+                    lsaF.destPort = ngPort;
+                    lsaF.lsa = newlsa;
+                    lsaF.cost = (int) System.currentTimeMillis();
+                    lsaOut.writeObject(lsaF);
+//                                while (true) {
+//                                    try {
+//                                        lsaForward.setSoTimeout(30000);
+//                                        ObjectInputStream in = new ObjectInputStream(lsaForward.getInputStream());
+//                                    } catch (SocketTimeoutException ex) {
+//                                        lsaOut.writeObject(lsaF);
+//                                        continue;
+//                                    }
+//                                }
+                    if(Router.ackTable.contains(Router.routerID)) {
+                        Router.ackTable.get(Router.routerID).remove(ngID);
+                        Router.ackTable.get(Router.routerID).put(ngID, "10"); //update to send and wait for ack
+                    } else {
+                        Router.ackTable.put((Router.routerID), new ConcurrentHashMap<String, String>());
+                        Router.ackTable.get(Router.routerID).put(ngID, "10");
+                    }
+                    lsaForward.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
     }
 }
