@@ -66,11 +66,30 @@ public class HelloHandler extends Thread {
                             change.lsa = Router.lsa;
                             Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
                             Router.lsaQueue.add(change);
+                            System.out.println("router down, add change");
                         }
 
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(neighborID + " is down!");
+                    Router.helloAck.remove(neighborID);
+                    Router.neighbors.remove(neighborID);
+                    UI.neighbors.get(Router.routerID).remove(neighborID);
+                    Router.lsa.neighbors.remove(neighborID);
+                    for(int j = 0; j < UI.neighbors.get(Router.routerID).size(); j++) {
+                        String ngID = UI.neighbors.get(Router.routerID).get(j);
+                        int ngPort = UI.routerList.get(ngID);
+                        Packet change = new Packet();
+                        change.type = 1;
+                        change.srcAddress = ngID;
+                        change.destPort = UI.routerList.get(Router.routerID);
+                        change.destAddress = Router.routerID;
+                        change.lsa = Router.lsa;
+                        Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
+                        Router.lsaQueue.add(change);
+                        System.out.println("router down, add change");
+                    }
+//                    e.printStackTrace();
                 }
 
             }
@@ -123,6 +142,27 @@ public class HelloHandler extends Thread {
                         Router.neighbors.remove(neighborID);
                         UI.neighbors.get(Router.routerID).remove(neighborID);
                         Router.lsa.neighbors.remove(neighborID);
+                        for(int j = 0; j < n.size(); j++) {
+                            String ngID = n.get(j);
+                            int ngPort = UI.routerList.get(ngID);
+                            Packet change = new Packet();
+                            change.type = 1;
+                            change.srcAddress = ngID;
+                            change.destPort = UI.routerList.get(Router.routerID);
+                            change.destAddress = Router.routerID;
+                            change.lsa = Router.lsa;
+                            Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
+                            Router.lsaQueue.add(change);
+                            System.out.println("router down, add change");
+                        }
+
+                    }
+                } catch (IOException e) {
+                        System.out.println(neighborID + " is down!");
+                        Router.helloAck.remove(neighborID);
+                        Router.neighbors.remove(neighborID);
+                        UI.neighbors.get(Router.routerID).remove(neighborID);
+                        Router.lsa.neighbors.remove(neighborID);
                         for(int j = 0; i < n.size(); j++) {
                             String ngID = n.get(j);
                             int ngPort = UI.routerList.get(ngID);
@@ -134,11 +174,9 @@ public class HelloHandler extends Thread {
                             change.lsa = Router.lsa;
                             Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
                             Router.lsaQueue.add(change);
+                            System.out.println("router down, add change");
                         }
-
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         }
