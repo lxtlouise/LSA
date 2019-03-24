@@ -18,6 +18,7 @@ public class Router {
     public static ConcurrentHashMap<String, Integer> neighbors; //neighborID, cost
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> old_routingTable;
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> new_routingTable;
+    public static ConcurrentHashMap<String, String> helloAck;
 
     public static ConcurrentLinkedQueue<Packet> receiveQueue; //need circular queue
     public static ConcurrentLinkedQueue<Packet> lsaQueue;
@@ -44,6 +45,11 @@ public class Router {
         }
         lsa = new LSA(routerID, 30000, 0, neighbors);
         LSDB.put(routerID, lsa);
+
+        helloAck = new ConcurrentHashMap<String, String>();
+        for (int i = 0; i < neighborsName.size(); i++) {
+            helloAck.put(neighborsName.get(i), "00");
+        }
 
         old_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>(); //<routerID, <neighborID, cost>>
         new_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>();
