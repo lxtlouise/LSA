@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Routing {
@@ -22,6 +19,7 @@ public class Routing {
         int vertex = 0;
         for (ConcurrentHashMap.Entry<String, ConcurrentHashMap<String, Integer>> entry : routingTable.entrySet()){
             String routerID = entry.getKey();
+//            System.out.println("build graph " + routerID);
             graph.setLabel(vertex, routerID);
             vertex++;
         }
@@ -41,7 +39,9 @@ public class Routing {
     }
     
 
-    public ArrayList<Integer> Dijkstra(int source, int target) {
+    public ArrayList<Integer> Dijkstra(String s, String t) {
+        int source = graph.getVertex(s);
+        int target = graph.getVertex(t);
         ArrayList<Integer> path = new ArrayList<Integer>();
         if (graph == null) {
             System.out.println("Need to build graph first!");
@@ -97,6 +97,19 @@ public class Routing {
         return p;
     }
 
+
+    public HashMap<Integer, ArrayList<Integer>> dijkstra(String s) {
+        int source = graph.getVertex(s);
+        List<String> neighbors = UI.neighbors.get(s);
+        HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
+        for (int i = 0; i < neighbors.size(); i++) {
+            String ng = neighbors.get(i);
+            int n = graph.getVertex(ng);
+            ArrayList<Integer> inner = Dijkstra(s, ng);
+            result.put(n, inner);
+        }
+        return result;
+    }
    
     
     

@@ -122,8 +122,7 @@ public class UI {
         System.out.println("(3) Add a link");
         System.out.println("(4) Display routing table");
         System.out.println("(5) Ping");
-        System.out.println("(6) Start");
-        System.out.println("(7) Help");
+        System.out.println("(6) Help");
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
@@ -136,7 +135,7 @@ public class UI {
             case (0):
                 System.exit(0);
             case (1):
-//                shortestPath();
+                shortestPath();
                 break;
             case (2):
 //                removeLink();
@@ -150,9 +149,6 @@ public class UI {
             case (5):
                 Ping(r);
                 break;
-            case (6):
-                StartLSA(r);
-                break;
             case (7):
                 help();
                 break;
@@ -162,7 +158,24 @@ public class UI {
 
     public static void routingTable() {
         try {
-            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.new_routingTable.entrySet()) {
+//            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.new_routingTable.entrySet()) {
+//                System.out.println(entry.getKey() + " " + entry.getValue());
+//            }
+            Routing routing = new Routing();
+            WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
+            HashMap<Integer, ArrayList<Integer>> path = routing.dijkstra(Router.routerID);
+            HashMap<String, String> result = new HashMap<>();
+            for (Map.Entry<Integer, ArrayList<Integer>> entry : path.entrySet()) {
+                int key = entry.getKey();
+                ArrayList<Integer> temp = entry.getValue();
+                int value = Integer.MAX_VALUE;
+                if (temp != null) {
+                     value = temp.get(temp.size() - 2);
+                }
+                result.put(graph.getLabel(key), graph.getLabel(value));
+
+            }
+            for (Map.Entry<String, String> entry: result.entrySet()) {
                 System.out.println(entry.getKey() + " " + entry.getValue());
             }
         } catch (Exception e) {
@@ -193,5 +206,20 @@ public class UI {
             }
         }
         System.out.println("finish send lsa");
+    }
+
+
+    public static void shortestPath() {
+        String source;
+        String target;
+        System.out.println("Source:");
+        source = reader.nextLine().toLowerCase();
+        System.out.println("Target:");
+        target = reader.nextLine().toLowerCase();
+        Routing routing = new Routing();
+        WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
+        ArrayList<Integer> result = routing.Dijkstra(source, target);
+        System.out.println(routing.getShortestPath(result));
+
     }
 }

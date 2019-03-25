@@ -1,4 +1,3 @@
-import com.sun.corba.se.spi.activation.Server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,6 +12,7 @@ public class Router {
     public static String routerID; //nitrogen.cs.pitt.edu
     int port; //listen port
     public static LSA lsa;
+    public static boolean failure; //used to emulate router failure
     public static ConcurrentHashMap<String, LSA> LSDB;
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> ackTable; //<routerID, <neighborID, S/A>>
     public static ConcurrentHashMap<String, Integer> neighbors; //neighborID, cost
@@ -33,10 +33,12 @@ public class Router {
     HelloHandler helloHandler;
     AckHandler ackHandler;
     ServerThread serverThread;
+    UpdateRoutingTable updateRoutingTable;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
         this.port = port;
+        this.failure = false;
         LSDB = new ConcurrentHashMap<String, LSA>();
         ackTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, String>>();
         neighbors = new ConcurrentHashMap<String, Integer>();
@@ -78,6 +80,9 @@ public class Router {
 
         ackHandler = new AckHandler();
         ackHandler.start();
+
+        updateRoutingTable = new UpdateRoutingTable();
+        updateRoutingTable.start();
     }
 
 }

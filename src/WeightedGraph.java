@@ -7,6 +7,11 @@ public class WeightedGraph {
     public WeightedGraph(int n) {
         graph = new int[n][n]; //initialize graph
         labels = new String[n];
+        for(int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                graph[i][j] = Integer.MAX_VALUE;
+            }
+        }
     }
 
     public int getVertexNumber(){
