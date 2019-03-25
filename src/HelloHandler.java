@@ -97,7 +97,7 @@ public class HelloHandler extends Thread {
             }
 
             try {
-                this.sleep(30000);
+                this.sleep(60000);
                 broadcast();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -149,9 +149,9 @@ public class HelloHandler extends Thread {
                             int ngPort = UI.routerList.get(ngID);
                             Packet change = new Packet();
                             change.type = 1;
-                            change.srcAddress = ngID;
-                            change.destPort = UI.routerList.get(Router.routerID);
-                            change.destAddress = Router.routerID;
+                            change.srcAddress = Router.routerID;
+                            change.destPort = UI.routerList.get(ngID);
+                            change.destAddress = ngID;
                             change.lsa = Router.lsa;
                             Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
                             Router.lsaQueue.add(change);

@@ -25,6 +25,7 @@ public class Router {
     public static ConcurrentLinkedQueue<Packet> helloQueue;
     public  static ConcurrentLinkedQueue<Packet> pingQueue;
     public static ConcurrentLinkedQueue<Packet> ackQueue;
+    public static ConcurrentLinkedQueue<Packet> lsaSendQueue; //for forwarding lsa
 
     ServerSocket serverSocket;
     ClientHandler clientHandler;
@@ -34,6 +35,7 @@ public class Router {
     AckHandler ackHandler;
     ServerThread serverThread;
     UpdateRoutingTable updateRoutingTable;
+    LSASendHandler lsaSendHandler;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
@@ -61,6 +63,7 @@ public class Router {
         helloQueue = new ConcurrentLinkedQueue<>();
         pingQueue = new ConcurrentLinkedQueue<>();
         ackQueue = new ConcurrentLinkedQueue<>();
+        lsaSendQueue = new ConcurrentLinkedQueue<>();
 
         serverSocket = new ServerSocket(port, 0, InetAddress.getByName(routerID));
         serverThread = new ServerThread(serverSocket, this);
@@ -83,6 +86,9 @@ public class Router {
 
         updateRoutingTable = new UpdateRoutingTable();
         updateRoutingTable.start();
+
+        lsaSendHandler = new LSASendHandler();
+        lsaSendHandler.start();
     }
 
 }

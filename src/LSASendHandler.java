@@ -1,0 +1,55 @@
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class LSASendHandler extends Thread {
+    protected boolean running = true;
+
+    private synchronized boolean isRunning() {
+        return this.running;
+    }
+
+    public void run() {
+        while (isRunning()) {
+            while (!Router.lsaSendQueue.isEmpty()) {
+                Packet p = Router.lsaSendQueue.remove();
+                String neighborID = p.destAddress;
+                int neighborPort = p.destPort;
+                String lsaID = p.lsa.routerID;
+                String routerID = p.srcAddress;
+                try {
+                    Socket socket = new Socket(InetAddress.getByName(neighborID), neighborPort);
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeObject(p);
+                    System.out.println("forward lsa");
+                    if (Router.ackTable.contains(lsaID)) {
+                        Router.ackTable.get(lsaID).remove(neighborID);
+                        Router.ackTable.get(lsaID).put(neighborID, "10"); //update to send and wait for ack
+                    } else {
+                        Router.ackTable.put((routerID), new ConcurrentHashMap<String, String>());
+                        Router.ackTable.get(lsaID).put(neighborID, "10");
+                    }
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                while (Router.ackTable.get(Router.routerID).get(neighborID).equals("10") && (int) (System.currentTimeMillis() - p.cost) > 100000) {
+                    Packet resend = new Packet();
+                    resend.cost = (int) System.currentTimeMillis();
+                    Router.lsaSendQueue.add(resend);
+                    System.out.println("resend lsa");
+                }
+
+            }
+
+            try {
+                this.sleep(30000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+}

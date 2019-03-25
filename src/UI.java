@@ -222,4 +222,26 @@ public class UI {
         System.out.println(routing.getShortestPath(result));
 
     }
+
+    public static synchronized void addLink() {
+
+    }
+
+    public static synchronized void rmLink() {
+        System.out.println("Drop link to :");
+        String router = reader.nextLine().toLowerCase();
+        Router.lsa.neighbors.remove(router);
+        UI.neighbors.remove(router);
+        Router.LSDB.remove(router);
+        for(int i = 0; i < Router.neighbors.size(); i++) {
+            Packet p = new Packet();
+            p.type = 1;
+            Router.lsa.sequence = Router.LSDB.get(Router.routerID).sequence++;
+            p.lsa = Router.lsa;
+            p.destAddress = UI.neighbors.get(router).get(i);
+            p.srcAddress = Router.routerID;
+            p.destPort = UI.routerList.get(p.destAddress);
+            Router.lsaQueue.add(p);
+        }
+    }
 }
