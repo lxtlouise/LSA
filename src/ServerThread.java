@@ -42,11 +42,9 @@ public class ServerThread extends Thread{
 
     public synchronized void shutdown(){
         this.running = false;
-        this.shutdown();
-//        try {
-//            this.serverSocket.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error closing server", e);
-//        }
+    }
+
+    public synchronized void restart() {
+        this.running = true;
     }
 }

@@ -173,5 +173,11 @@ public class LSAHandler extends Thread {
             }
     }
 
+    public synchronized void shutdown(){
+        this.running = false;
+    }
 
+    public synchronized void restart() {
+        this.running = true;
+    }
 }

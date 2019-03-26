@@ -129,7 +129,7 @@ public class UI {
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
-        while (choice < 0 || choice > 7) { // checks for the correct input; if incorrect, loops until valid
+        while (choice < 0 || choice > 9) { // checks for the correct input; if incorrect, loops until valid
             System.out.print("Please, enter a choice within menu options: ");
             choice = Integer.parseInt(reader.nextLine());
         }
@@ -275,11 +275,20 @@ public class UI {
     }
 
     public static synchronized void dropRouter() {
+        System.out.println("stop router");
         Router.serverThread.shutdown();
+        Router.helloHandler.shutdown();
+        Router.lsaSendHandler.shutdown();
+        Router.lsaHandler.shutdown();
+        Router.clientHandler.shutdown();
     }
 
     public static synchronized void recoverRouter() {
-        Router.serverThread.start();
+        Router.serverThread.restart();
+        Router.helloHandler.restart();
+        Router.lsaHandler.restart();
+        Router.lsaSendHandler.restart();
+        Router.clientHandler.restart();
     }
 
     public static synchronized void transferFile() {

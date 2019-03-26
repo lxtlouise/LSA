@@ -29,15 +29,16 @@ public class Router {
     public static ConcurrentLinkedQueue<Packet> requestQueue;
 
     ServerSocket serverSocket;
-    ClientHandler clientHandler;
-    LSAHandler lsaHandler;
+    public static ClientHandler clientHandler;
+    public static LSAHandler lsaHandler;
     PingHandler pingHandler;
-    HelloHandler helloHandler;
+    public static HelloHandler helloHandler;
     AckHandler ackHandler;
     public static ServerThread serverThread;
     UpdateRoutingTable updateRoutingTable;
-    LSASendHandler lsaSendHandler;
+    public static LSASendHandler lsaSendHandler;
     EstablishHandler establishHandler;
+    UpdateLSDB updateLSDB;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
@@ -95,6 +96,9 @@ public class Router {
 
         establishHandler = new EstablishHandler();
         establishHandler.start();
+
+        updateLSDB = new UpdateLSDB();
+        updateLSDB.start();
     }
 
 }

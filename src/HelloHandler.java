@@ -56,6 +56,7 @@ public class HelloHandler extends Thread {
                             Router.neighbors.remove(neighborID);
                             UI.neighbors.get(routerID).remove(neighborID);
                             Router.lsa.neighbors.remove(neighborID);
+                            Router.LSDB.put(Router.routerID, Router.lsa);
                             List<String> n = UI.neighbors.get(routerID);
                             for (int i = 0; i < n.size(); i++) {
                                 String ngID = n.get(i);
@@ -130,6 +131,7 @@ public class HelloHandler extends Thread {
                         Router.neighbors.remove(neighborID);
                         UI.neighbors.get(Router.routerID).remove(neighborID);
                         Router.lsa.neighbors.remove(neighborID);
+                        Router.LSDB.put(Router.routerID, Router.lsa);
                         for(int j = 0; j < n.size(); j++) {
                             String ngID = n.get(j);
                             int ngPort = UI.routerList.get(ngID);
@@ -152,5 +154,12 @@ public class HelloHandler extends Thread {
             }
         }
 
+    public synchronized void shutdown(){
+        this.running = false;
+    }
+
+    public synchronized void restart() {
+        this.running = true;
+    }
 
 }

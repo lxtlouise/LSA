@@ -51,6 +51,39 @@ public class EstablishHandler extends Thread {
                         lsaF.lsa = Router.lsa;
                         Router.lsaSendQueue.add(lsaF);
                     }
+                    Packet confirm = new Packet();
+                    confirm.type = 4;
+                    confirm.srcAddress = routerID;
+                    confirm.destPort = UI.routerList.get(neighborID);
+                    confirm.destAddress = neighborID;
+                    confirm.cost = (int) System.currentTimeMillis();
+                    confirm.count = 2;
+                    confirm.lsa = Router.lsa;
+                    try {
+                        Socket ackRequest = new Socket(InetAddress.getByName(neighborID), confirm.destPort);
+                        ObjectOutputStream out = new ObjectOutputStream(ackRequest.getOutputStream());
+                        out.writeObject(confirm);
+                        ackRequest.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (p.count == 2) {
+                    System.out.println("get add link confirm successfully");
+                    int cost = (int) System.currentTimeMillis() - p.cost;
+                    Router.lsa.neighbors.put(neighborID, cost);
+                    Router.LSDB.put(routerID, Router.lsa);
+                    Router.lsa.sequence++;
+                    UI.neighbors.get(routerID).add(neighborID);
+                    for (int i = 0; i < UI.neighbors.get(routerID).size() - 1; i++) {
+                        String ng = UI.neighbors.get(routerID).get(i);
+                        Packet lsaF = new Packet();
+                        lsaF.type = 1;
+                        lsaF.srcAddress = routerID;
+                        lsaF.destAddress = ng;
+                        lsaF.destPort = UI.routerList.get(ng);
+                        lsaF.lsa = Router.lsa;
+                        Router.lsaSendQueue.add(lsaF);
+                    }
                 }
 
             }
