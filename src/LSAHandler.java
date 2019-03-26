@@ -4,6 +4,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -118,11 +119,13 @@ public class LSAHandler extends Thread {
                 Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    public void broadcast() {
+    public void broadcast() throws IOException {
         List<String> n = UI.neighbors.get(Router.routerID);
         for (int i = 0; i < n.size(); i++) {
                 String ngID = n.get(i);
@@ -141,8 +144,10 @@ public class LSAHandler extends Thread {
                     lsaF.lsa = newlsa;
                     lsaF.cost = (int) System.currentTimeMillis();
 //                    lsaOut.writeObject(lsaF);
-                    Router.lsaSendQueue.add(lsaF);
-                    System.out.println("broadcast lsa");
+                    if(InetAddress.getByName(lsaF.srcAddress).isReachable(50000)) {
+                        Router.lsaSendQueue.add(lsaF);
+                        System.out.println("broadcast lsa");
+                    }
                     int sendTime = (int) System.currentTimeMillis();
 //                    if(Router.ackTable.contains(Router.routerID)) {
 //                        Router.ackTable.get(Router.routerID).remove(ngID);
@@ -167,4 +172,6 @@ public class LSAHandler extends Thread {
 //                }
             }
     }
+
+
 }

@@ -122,7 +122,10 @@ public class UI {
         System.out.println("(3) Add a link");
         System.out.println("(4) Display routing table");
         System.out.println("(5) Ping");
-        System.out.println("(6) Help");
+        System.out.println("(6) Stop router");
+        System.out.println("(7) Recover router");
+        System.out.println("(8) Transfer file");
+        System.out.println("(9) Help");
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
@@ -138,10 +141,10 @@ public class UI {
                 shortestPath();
                 break;
             case (2):
-//                removeLink();
+                removeLink();
                 break;
             case (3):
-//                addLink();
+                addLink();
                 break;
             case (4):
                 routingTable();
@@ -149,7 +152,14 @@ public class UI {
             case (5):
                 Ping(r);
                 break;
+            case (6):
+                dropRouter();
+                break;
             case (7):
+                recoverRouter();
+            case (8):
+                transferFile();
+            case (9):
                 help();
                 break;
         }
@@ -224,11 +234,29 @@ public class UI {
     }
 
     public static synchronized void addLink() {
+        System.out.println("Add link to: ");
+        String neighborID = reader.nextLine().toLowerCase();
+        Packet p = new Packet();
+        p.destPort = UI.routerList.get(neighborID);
+        p.destAddress = neighborID;
+        p.srcAddress = Router.routerID;
+        p.cost = (int) System.currentTimeMillis();
+        p.lsa = Router.lsa;
+        p.count = 0;
+        p.type = 4;
+        try {
+            Socket socket = new Socket(InetAddress.getByName(neighborID), p.destPort);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(p);
+            System.out.println("send add link request");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public static synchronized void rmLink() {
-        System.out.println("Drop link to :");
+    public static synchronized void removeLink() {
+        System.out.println("Drop link to: ");
         String router = reader.nextLine().toLowerCase();
         Router.lsa.neighbors.remove(router);
         UI.neighbors.remove(router);
@@ -242,6 +270,24 @@ public class UI {
             p.srcAddress = Router.routerID;
             p.destPort = UI.routerList.get(p.destAddress);
             Router.lsaQueue.add(p);
+            System.out.println("forward link failure");
         }
+    }
+
+    public static synchronized void dropRouter() {
+        Router.serverThread.shutdown();
+    }
+
+    public static synchronized void recoverRouter() {
+        Router.serverThread.start();
+    }
+
+    public static synchronized void transferFile() {
+        System.out.println("Upload the file you need to transfer");
+        String fileName = reader.nextLine();
+        //uploadTranfer(fileName);
+        System.out.println("Destination: ");
+        String destination = reader.nextLine().toLowerCase();
+
     }
 }

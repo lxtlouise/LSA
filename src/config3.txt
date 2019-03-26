@@ -3,6 +3,9 @@ port:51886
 neighbors:oxygen.cs.pitt.edu
 router:oxygen.cs.pitt.edu
 port:51668
-neighbors:nitrogen.cs.pitt.edu
+neighbors:nitrogen.cs.pitt.edu:arsenic.cs.pitt.edu
+router:arsenic.cs.pitt.edu
+port:52888
+neighbors:oxygen.cs.pitt.edu
 
 

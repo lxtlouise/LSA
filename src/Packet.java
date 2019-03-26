@@ -8,4 +8,5 @@ public class Packet implements Serializable{
     int destPort;
     LSA lsa;
     int cost;
+    int count;
 }

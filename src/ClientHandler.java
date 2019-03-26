@@ -19,7 +19,7 @@ public class ClientHandler extends Thread{
         while (isRunning()) {
             while (!Router.receiveQueue.isEmpty()) {
                 Packet message = Router.receiveQueue.remove();
-                System.out.println("client handler remove one message from receive queue " + message.type + " " + message.srcPort);
+                System.out.println("client handler remove one message from receive queue " + message.type + " " + message.srcAddress);
                 if (message.type == 0) { //hello
                     Router.helloQueue.add(message);
                 } else if (message.type == 1) { //lsa
@@ -28,8 +28,12 @@ public class ClientHandler extends Thread{
                     Router.pingQueue.add(message);
                 } else if (message.type == 3) { //ack
                     Router.ackQueue.add(message);
+                } else if (message.type == 4) { //connect request
+                    Router.requestQueue.add(message);
                 }
             }
         }
     }
+
+
 }
