@@ -15,8 +15,19 @@ public class UpdateRoutingTable extends Thread {
                 Router.new_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>();
                 System.out.println("update routing table");
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                if(!isRunning()){
+                    break;
+                }
             }
         }
+    }
+
+    public synchronized void shutdown(){
+        this.running = false;
+        interrupt();
+    }
+
+    public synchronized void restart() {
+        this.running = true;
     }
 }

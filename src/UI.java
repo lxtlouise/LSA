@@ -285,6 +285,7 @@ public class UI {
         Router.clientHandler.shutdown();
         Router.checkRouterAlive.shutdown();
         Router.helloAckHandler.shutdown();
+        Router.updateRoutingTable.shutdown();
     }
 
     public static synchronized void recoverRouter() {//may delete this function

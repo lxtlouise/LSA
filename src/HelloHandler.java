@@ -68,7 +68,7 @@ public class HelloHandler extends Thread {
             HelloNode hn = Router.helloAck.get(neighborID);
             if (!hn.ack.equals("pending")) {
                 hn.sendTime = hello.cost;
-                hn.counter++;
+                hn.counter = 0;
                 hn.ack = "pending";
                 Socket socket = new Socket(InetAddress.getByName(neighborID), hello.destPort);
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());

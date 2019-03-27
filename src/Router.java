@@ -36,7 +36,7 @@ public class Router {
     public static HelloHandler helloHandler;
     AckHandler ackHandler;
     public static ServerThread serverThread;
-    UpdateRoutingTable updateRoutingTable;
+    public static UpdateRoutingTable updateRoutingTable;
     public static LSASendHandler lsaSendHandler;
     EstablishHandler establishHandler;
     UpdateLSDB updateLSDB;
