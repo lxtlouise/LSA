@@ -115,15 +115,16 @@ public class LSAHandler extends Thread {
 
             try {
                 this.sleep(30000);
-                broadcast();
-                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
+//                broadcast();
+//                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
             } catch (InterruptedException e) {
                 if(!running){
                     break;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+//            catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 

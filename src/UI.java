@@ -222,10 +222,8 @@ public class UI {
 
 
     public static void shortestPath() {
-        String source;
+        String source = Router.routerID;
         String target;
-        System.out.println("Source:");
-        source = reader.nextLine().toLowerCase();
         System.out.println("Target:");
         target = reader.nextLine().toLowerCase();
         Routing routing = new Routing();
@@ -264,6 +262,7 @@ public class UI {
         UI.neighbors.remove(router);
         Router.LSDB.remove(router);
         Router.LSDB.put(Router.routerID, Router.lsa);
+        Router.helloAck.remove(router);
         for(int i = 0; i < Router.neighbors.size(); i++) {
             Packet p = new Packet();
             p.type = 1;
@@ -284,6 +283,8 @@ public class UI {
         Router.lsaSendHandler.shutdown();
         Router.lsaHandler.shutdown();
         Router.clientHandler.shutdown();
+        Router.checkRouterAlive.shutdown();
+        Router.helloAckHandler.shutdown();
     }
 
     public static synchronized void recoverRouter() {//may delete this function

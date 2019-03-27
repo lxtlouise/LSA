@@ -2,7 +2,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LSASendHandler extends Thread {
     protected boolean running = true;
@@ -49,13 +51,52 @@ public class LSASendHandler extends Thread {
 
             try {
                 this.sleep(30000);
+                broadcast();
+                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
             } catch (InterruptedException e) {
                 if(!running){
                     break;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
+
+
+    public void broadcast() throws IOException {
+        List<String> n = UI.neighbors.get(Router.routerID);
+        for (int i = 0; i < n.size(); i++) {
+            String ngID = n.get(i);
+            int ngPort = UI.routerList.get(ngID);
+            LSA newlsa = Router.lsa;
+            newlsa.sequence++;
+            Router.LSDB.put(Router.routerID, newlsa);
+            Packet lsaF = new Packet();
+            lsaF.type = 1;
+            lsaF.srcAddress = Router.routerID;
+            lsaF.destAddress = ngID;
+            lsaF.destPort = ngPort;
+            lsaF.lsa = newlsa;
+            lsaF.cost = (int) System.currentTimeMillis();
+            if(InetAddress.getByName(lsaF.srcAddress).isReachable(50000)) {
+                Router.lsaSendQueue.add(lsaF);
+                System.out.println("broadcast lsa");
+            }
+            if(Router.ackTable.containsKey(Router.routerID)) {
+                ConcurrentHashMap<String, String> inner = Router.ackTable.get(Router.routerID);
+                inner.put(ngID, "10");
+                Router.ackTable.put(Router.routerID, inner);
+            } else {
+                ConcurrentHashMap<String, String> inner = new ConcurrentHashMap<>();
+                inner. put(ngID, "10");
+                Router.ackTable.put(Router.routerID, inner);
+            }
+
+        }
+    }
+
+
     public synchronized void shutdown(){
         this.running = false;
         interrupt();

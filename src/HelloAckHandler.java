@@ -16,6 +16,25 @@ public class HelloAckHandler extends Thread {
                 hn.counter = 0;
                 System.out.println("get hello ack from: " + neighborID);
             }
+
+            try {
+                this.sleep(30000);
+            } catch (InterruptedException e) {
+                if(!running){
+                    break;
+                }
+            }
         }
+
+
+    }
+
+    public synchronized void shutdown(){
+        this.running = false;
+        interrupt();
+    }
+
+    public synchronized void restart() {
+        this.running = true;
     }
 }

@@ -28,14 +28,14 @@ public class CheckRouterAlive extends Thread {
 
     public void checkAlive() throws IOException {
         System.out.println("check aliveness");
-        int timeout = 60000;
+        int timeout = 80000;
         for(Map.Entry<String, HelloNode> entry : Router.helloAck.entrySet()){
             String neighborID = entry.getKey();
             HelloNode hn = entry.getValue();
             int time = (int)System.currentTimeMillis() - hn.sendTime;
             System.out.println(hn.neighborID + " " + hn.ack + " " + hn.counter + " " + time);
             Socket socket = null;
-            while (hn.counter < 3 && hn.ack.equals("pending") && time > timeout) {
+            while (hn.counter < 5 && hn.ack.equals("pending") && time > timeout) {
                 System.out.println("time lag is " + time);
                 Packet resend = new Packet();
                 resend.type = 0;
@@ -51,10 +51,7 @@ public class CheckRouterAlive extends Thread {
                 out.writeObject(resend);
                 System.out.println("resend hello " + hn.counter);
             }
-            if (socket != null) {
-                socket.close();
-            }
-            if (hn.counter >= 3 && hn.ack.equals("pending")) {
+            if (hn.counter >= 5 && hn.ack.equals("pending")) {
                 System.out.println ("neighbor is down " + neighborID);
                 Router.helloAck.remove(neighborID);
                 Router.neighbors.remove(neighborID);
@@ -74,6 +71,9 @@ public class CheckRouterAlive extends Thread {
                     Router.lsaSendQueue.add(change);
                     System.out.println("router down, broadcast change using lsa");
                 }
+            }
+            if (socket != null) {
+                socket.close();
             }
         }
     }

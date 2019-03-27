@@ -39,6 +39,8 @@ public class EstablishHandler extends Thread {
                     int cost = (int) System.currentTimeMillis() - p.cost;
                     Router.lsa.neighbors.put(neighborID, cost);
                     Router.LSDB.put(routerID, Router.lsa);
+                    HelloNode hn = new HelloNode(neighborID, 0, (int)System.currentTimeMillis(), "false");
+                    Router.helloAck.put(neighborID, hn);
                     Router.lsa.sequence++;
                     UI.neighbors.get(routerID).add(neighborID);
                     for (int i = 0; i < UI.neighbors.get(routerID).size() - 1; i++) {
@@ -72,6 +74,8 @@ public class EstablishHandler extends Thread {
                     int cost = (int) System.currentTimeMillis() - p.cost;
                     Router.lsa.neighbors.put(neighborID, cost);
                     Router.LSDB.put(routerID, Router.lsa);
+                    HelloNode hn = new HelloNode(neighborID, 0, (int)System.currentTimeMillis(), "false");
+                    Router.helloAck.put(neighborID, hn);
                     Router.lsa.sequence++;
                     UI.neighbors.get(routerID).add(neighborID);
                     for (int i = 0; i < UI.neighbors.get(routerID).size() - 1; i++) {

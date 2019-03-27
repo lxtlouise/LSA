@@ -41,6 +41,7 @@ public class Router {
     EstablishHandler establishHandler;
     UpdateLSDB updateLSDB;
     public static CheckRouterAlive checkRouterAlive;
+    public static HelloAckHandler helloAckHandler;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
@@ -110,6 +111,9 @@ public class Router {
 
         checkRouterAlive = new CheckRouterAlive();
         checkRouterAlive.start();
+
+        helloAckHandler = new HelloAckHandler();
+        helloAckHandler.start();
     }
 
 }
