@@ -1,6 +1,6 @@
-router:127.0.0.1
-port:51888
-neighbors:192.168.1.11
-router:192.168.1.11
-port:51666
-neighbors:127.0.0.1
+router:nitrogen.cs.pitt.edu
+port:51886
+neighbors:oxygen.cs.pitt.edu
+router:oxygen.cs.pitt.edu
+port:51668
+neighbors:nitrogen.cs.pitt.edu

@@ -24,6 +24,7 @@ public class UpdateLSDB extends Thread {
                 LSA lsa = entry.getValue();
                 if (lsa.age == 0) {
                     Router.LSDB.remove(lsaID);
+                    System.out.println("update LSDB: " + lsa.routerID);
                 }
             }
         }

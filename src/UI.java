@@ -157,8 +157,10 @@ public class UI {
                 break;
             case (7):
                 recoverRouter();
+                break;
             case (8):
                 transferFile();
+                break;
             case (9):
                 help();
                 break;
@@ -261,6 +263,7 @@ public class UI {
         Router.lsa.neighbors.remove(router);
         UI.neighbors.remove(router);
         Router.LSDB.remove(router);
+        Router.LSDB.put(Router.routerID, Router.lsa);
         for(int i = 0; i < Router.neighbors.size(); i++) {
             Packet p = new Packet();
             p.type = 1;
@@ -283,12 +286,14 @@ public class UI {
         Router.clientHandler.shutdown();
     }
 
-    public static synchronized void recoverRouter() {
+    public static synchronized void recoverRouter() {//may delete this function
         Router.serverThread.restart();
         Router.helloHandler.restart();
         Router.lsaHandler.restart();
         Router.lsaSendHandler.restart();
         Router.clientHandler.restart();
+        Router.receiveQueue.clear();
+        Router.lsa.sequence = 0;
     }
 
     public static synchronized void transferFile() {

@@ -30,6 +30,8 @@ public class ClientHandler extends Thread{
                     Router.ackQueue.add(message);
                 } else if (message.type == 4) { //connect request
                     Router.requestQueue.add(message);
+                } else if (message.type == 5) { //hello ack
+                    Router.helloAckQueue.add(message);
                 }
             }
         }
@@ -37,6 +39,7 @@ public class ClientHandler extends Thread{
 
     public synchronized void shutdown(){
         this.running = false;
+        interrupt();
     }
 
     public synchronized void restart() {

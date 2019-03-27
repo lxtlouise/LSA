@@ -50,12 +50,15 @@ public class LSASendHandler extends Thread {
             try {
                 this.sleep(30000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                if(!running){
+                    break;
+                }
             }
         }
     }
     public synchronized void shutdown(){
         this.running = false;
+        interrupt();
     }
 
     public synchronized void restart() {

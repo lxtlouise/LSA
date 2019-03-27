@@ -118,7 +118,9 @@ public class LSAHandler extends Thread {
                 broadcast();
                 Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                if(!running){
+                    break;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -175,6 +177,7 @@ public class LSAHandler extends Thread {
 
     public synchronized void shutdown(){
         this.running = false;
+        interrupt();
     }
 
     public synchronized void restart() {

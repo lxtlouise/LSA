@@ -18,7 +18,7 @@ public class Router {
     public static ConcurrentHashMap<String, Integer> neighbors; //neighborID, cost
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> old_routingTable;
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> new_routingTable;
-    public static ConcurrentHashMap<String, String> helloAck;
+    public static ConcurrentHashMap<String, HelloNode> helloAck;
 
     public static ConcurrentLinkedQueue<Packet> receiveQueue; //need circular queue
     public static ConcurrentLinkedQueue<Packet> lsaQueue;
@@ -27,6 +27,7 @@ public class Router {
     public static ConcurrentLinkedQueue<Packet> ackQueue;
     public static ConcurrentLinkedQueue<Packet> lsaSendQueue; //for forwarding lsa
     public static ConcurrentLinkedQueue<Packet> requestQueue;
+    public static ConcurrentLinkedQueue<Packet> helloAckQueue;
 
     ServerSocket serverSocket;
     public static ClientHandler clientHandler;
@@ -39,6 +40,7 @@ public class Router {
     public static LSASendHandler lsaSendHandler;
     EstablishHandler establishHandler;
     UpdateLSDB updateLSDB;
+    public static CheckRouterAlive checkRouterAlive;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
@@ -53,9 +55,14 @@ public class Router {
         lsa = new LSA(routerID, 30000, 0, neighbors);
         LSDB.put(routerID, lsa);
 
-        helloAck = new ConcurrentHashMap<String, String>();
+        helloAck = new ConcurrentHashMap<String, HelloNode>();
         for (int i = 0; i < neighborsName.size(); i++) {
-            helloAck.put(neighborsName.get(i), "00");
+            String neighborID = neighborsName.get(i);
+            int count = 0;
+            int time = (int) System.currentTimeMillis();
+            String ack = "false";
+            HelloNode hn = new HelloNode(neighborID, count, time, ack);
+            helloAck.put(neighborID, hn);
         }
 
         old_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>(); //<routerID, <neighborID, cost>>
@@ -68,6 +75,7 @@ public class Router {
         ackQueue = new ConcurrentLinkedQueue<>();
         lsaSendQueue = new ConcurrentLinkedQueue<>();
         requestQueue = new ConcurrentLinkedQueue<>();
+        helloAckQueue = new ConcurrentLinkedQueue<>();
 
         serverSocket = new ServerSocket(port, 0, InetAddress.getByName(routerID));
         serverThread = new ServerThread(serverSocket, this);
@@ -99,6 +107,9 @@ public class Router {
 
         updateLSDB = new UpdateLSDB();
         updateLSDB.start();
+
+        checkRouterAlive = new CheckRouterAlive();
+        checkRouterAlive.start();
     }
 
 }

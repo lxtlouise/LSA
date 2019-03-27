@@ -42,6 +42,7 @@ public class ServerThread extends Thread{
 
     public synchronized void shutdown(){
         this.running = false;
+        interrupt();
     }
 
     public synchronized void restart() {
