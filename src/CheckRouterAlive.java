@@ -58,6 +58,7 @@ public class CheckRouterAlive extends Thread {
                 UI.neighbors.get(Router.routerID).remove(neighborID);
                 Router.lsa.neighbors.remove(neighborID);
                 Router.LSDB.put(Router.routerID, Router.lsa);
+                Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
                 for(int j = 0; j < UI.neighbors.get(Router.routerID).size(); j++) {
                     String ngID = UI.neighbors.get(Router.routerID).get(j);
                     int ngPort = UI.routerList.get(ngID);

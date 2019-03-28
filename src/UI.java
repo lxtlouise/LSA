@@ -123,13 +123,12 @@ public class UI {
         System.out.println("(4) Display routing table");
         System.out.println("(5) Ping");
         System.out.println("(6) Stop router");
-        System.out.println("(7) Recover router");
-        System.out.println("(8) Transfer file");
-        System.out.println("(9) Help");
+        System.out.println("(7) Transfer file");
+        System.out.println("(8) Help");
 
         choice = Integer.parseInt(reader.nextLine());    // parse string input to a digit
 
-        while (choice < 0 || choice > 9) { // checks for the correct input; if incorrect, loops until valid
+        while (choice < 0 || choice > 8) { // checks for the correct input; if incorrect, loops until valid
             System.out.print("Please, enter a choice within menu options: ");
             choice = Integer.parseInt(reader.nextLine());
         }
@@ -156,12 +155,9 @@ public class UI {
                 dropRouter();
                 break;
             case (7):
-                recoverRouter();
-                break;
-            case (8):
                 transferFile();
                 break;
-            case (9):
+            case (8):
                 help();
                 break;
         }
@@ -170,9 +166,9 @@ public class UI {
 
     public static void routingTable() {
         try {
-//            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.new_routingTable.entrySet()) {
-//                System.out.println(entry.getKey() + " " + entry.getValue());
-//            }
+            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.old_routingTable.entrySet()) {
+                System.out.println(entry.getKey() + " " + entry.getValue());
+            }
             Routing routing = new Routing();
             WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
             HashMap<Integer, ArrayList<Integer>> path = routing.dijkstra(Router.routerID);
@@ -181,8 +177,9 @@ public class UI {
                 int key = entry.getKey();
                 ArrayList<Integer> temp = entry.getValue();
                 int value = Integer.MAX_VALUE;
-                if (temp != null) {
-                     value = temp.get(temp.size() - 2);
+                if (temp != null && temp.size() != 0) {
+                    System.out.println(key + " " + temp);
+                    value = temp.get(temp.size() - 2);
                 }
                 result.put(graph.getLabel(key), graph.getLabel(value));
 
@@ -193,31 +190,6 @@ public class UI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void StartLSA(String routerID) throws IOException {
-        List<String> n = neighbors.get(routerID);
-        for (int i = 0; i < n.size(); i++) {
-            Packet lsaMessage = new Packet();
-            String neighborID = n.get(i);
-            lsaMessage.type = 1;
-            lsaMessage.srcAddress = routerID;
-            lsaMessage.destAddress = neighborID;
-            lsaMessage.destPort = UI.routerList.get(neighborID);
-            lsaMessage.lsa = Router.lsa;
-            lsaMessage.cost = (int) System.currentTimeMillis();
-            Socket socket = new Socket(InetAddress.getByName(neighborID), lsaMessage.destPort);
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(lsaMessage);
-            if(Router.ackTable.contains(routerID)) {
-                Router.ackTable.get(routerID).remove(routerID);
-                Router.ackTable.get(routerID).put(routerID, "10"); //update to send and wait for ack
-            } else {
-                Router.ackTable.put((routerID), new ConcurrentHashMap<String, String>());
-                Router.ackTable.get(routerID).put(routerID, "10");
-            }
-        }
-        System.out.println("finish send lsa");
     }
 
 
@@ -259,10 +231,11 @@ public class UI {
         System.out.println("Drop link to: ");
         String router = reader.nextLine().toLowerCase();
         Router.lsa.neighbors.remove(router);
-        UI.neighbors.remove(router);
+        UI.neighbors.get(Router.routerID).remove(router);
         Router.LSDB.remove(router);
         Router.LSDB.put(Router.routerID, Router.lsa);
         Router.helloAck.remove(router);
+        Router.new_routingTable = new Routing().buildRoutingTable(Router.LSDB);
         for(int i = 0; i < Router.neighbors.size(); i++) {
             Packet p = new Packet();
             p.type = 1;
@@ -288,22 +261,21 @@ public class UI {
         Router.updateRoutingTable.shutdown();
     }
 
-    public static synchronized void recoverRouter() {//may delete this function
-        Router.serverThread.restart();
-        Router.helloHandler.restart();
-        Router.lsaHandler.restart();
-        Router.lsaSendHandler.restart();
-        Router.clientHandler.restart();
-        Router.receiveQueue.clear();
-        Router.lsa.sequence = 0;
-    }
 
     public static synchronized void transferFile() {
         System.out.println("Upload the file you need to transfer");
         String fileName = reader.nextLine();
-        //uploadTranfer(fileName);
         System.out.println("Destination: ");
         String destination = reader.nextLine().toLowerCase();
+        Routing routing = new Routing();
+        WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
+        ArrayList<Integer> result = routing.Dijkstra(Router.routerID, destination);
+        String path = routing.getShortestPath(result);
+        String[] p = path.split("->");
+        String routerID = Router.routerID;
+        for(int i = 1; i < p.length; i++) {
+            String neighborID = p[i];
+        }
 
     }
 }

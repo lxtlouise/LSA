@@ -46,11 +46,22 @@ public class Routing {
         if (graph == null) {
             System.out.println("Need to build graph first!");
         } else {
-            PriorityQueue<Node> queue = new PriorityQueue<Node>();
+            PriorityQueue<Node> queue = new PriorityQueue<Node>(50, new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    if (o1.weight > o2.weight) {
+                        return 1;
+                    } else if (o1.weight < o2.weight) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
             boolean[] visited = new boolean[graph.getVertexNumber()];
             Node head = new Node(source, 0);
             head.prev.add(source);
-            queue.add(head);     
+            queue.add(head);
             while(!queue.isEmpty()) {
                 Node temp = queue.remove();
                 visited[temp.key] = true;
@@ -62,12 +73,13 @@ public class Routing {
                     for(int i = 0; i < neighbors.size(); i++) {
                     		int n = neighbors.get(i);
                         if (visited[n] == false) {
-                        		int weight = graph.getWeight(n, temp.key) + temp.weight;
-                        		Node c = new Node(neighbors.get(i), weight);
-                        		c.prev = new ArrayList<>(temp.prev);
+                            int weight = graph.getWeight(n, temp.key) + temp.weight;
+                            Node c = new Node(n, weight);
+                            c.prev = new ArrayList<>(temp.prev);
 //                        		c.prev.add(temp.key);
-                        		c.prev.add(neighbors.get(i));
-                             queue.add(c);
+                            c.prev.add(n);
+                            queue.add(c);
+
                         } else {
                         		continue;
                         }
@@ -75,7 +87,7 @@ public class Routing {
                 }
             }
         }
-        
+
         return path;
     }
 
@@ -98,22 +110,26 @@ public class Routing {
     }
 
 
-    public HashMap<Integer, ArrayList<Integer>> dijkstra(String s) {
+    public HashMap<Integer, ArrayList<Integer>> dijkstra(String s) { //<destination, path>
         int source = graph.getVertex(s);
-        List<String> neighbors = UI.neighbors.get(s);
         HashMap<Integer, ArrayList<Integer>> result = new HashMap<>();
-        for (int i = 0; i < neighbors.size(); i++) {
-            String ng = neighbors.get(i);
-            int n = graph.getVertex(ng);
-            ArrayList<Integer> inner = Dijkstra(s, ng);
-            result.put(n, inner);
+        for(Map.Entry<String, Integer> entry: UI.routerList.entrySet()) {
+            String target = entry.getKey();
+            if (target.equals(Router.routerID)) {
+                continue;
+            } else {
+                int n = graph.getVertex(target);
+                ArrayList<Integer> inner = Dijkstra(s, target);
+                result.put(n, inner);
+            }
         }
+
         return result;
     }
    
     
     
-    class Node implements Comparable<Node>{
+    class Node {
     		ArrayList<Integer> prev = new ArrayList<Integer>();
         int key; //neighbor vertex id
         int weight;
@@ -121,8 +137,18 @@ public class Routing {
             this.key = key;
             this.weight = weight;
         }
+
         public int compareTo(Node other){
-    			return Integer.compare(weight, other.weight);		
+            if(this.weight < other.weight) {
+                return -1;
+            } else if (this.weight > other.weight) {
+                return 1;
+            } else {
+                return 0;
+            }
+//            return Integer.compare(this.weight, other.weight);
         }
+
     }
+
 }

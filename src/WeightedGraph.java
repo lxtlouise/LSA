@@ -9,7 +9,11 @@ public class WeightedGraph {
         labels = new String[n];
         for(int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                graph[i][j] = Integer.MAX_VALUE;
+                if(i == j) {
+                    graph[i][j] = 0;
+                } else {
+                    graph[i][j] = Integer.MAX_VALUE;
+                }
             }
         }
     }
@@ -49,7 +53,7 @@ public class WeightedGraph {
         ArrayList<Integer> neighbors = new ArrayList<Integer>();
         int[] temp = graph[vertex];
         for(int i = 0; i < temp.length; i++) {
-            if (graph[vertex][i] != 0) {
+            if (graph[vertex][i] != Integer.MAX_VALUE) {
                 neighbors.add(i);
             } else {
                 continue;

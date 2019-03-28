@@ -11,10 +11,14 @@ public class HelloAckHandler extends Thread {
                 Packet helloAck = Router.helloAckQueue.remove();
                 String neighborID = helloAck.srcAddress;
                 int neighborPort = UI.routerList.get(neighborID);
-                HelloNode hn = Router.helloAck.get(neighborID);
-                hn.ack = "true";
-                hn.counter = 0;
-                System.out.println("get hello ack from: " + neighborID);
+                if(Router.helloAck.containsKey(neighborID)) {
+                    HelloNode hn = Router.helloAck.get(neighborID);
+                    hn.ack = "true";
+                    hn.counter = 0;
+                    System.out.println("get hello ack from: " + neighborID);
+                } else {
+                    continue;
+                }
             }
 
             try {

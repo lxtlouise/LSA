@@ -38,7 +38,7 @@ public class LSASendHandler extends Thread {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    while (Router.ackTable.get(lsaID).get(neighborID).equals("10") && (int) (System.currentTimeMillis() - p.cost) > 100000) {
+                    if (Router.ackTable.get(lsaID).get(neighborID).equals("10") && (int) (System.currentTimeMillis() - p.cost) > 100000) {
                         Packet resend = new Packet();
                         resend.cost = (int) System.currentTimeMillis();
                         Router.lsaSendQueue.add(resend);
