@@ -32,6 +32,8 @@ public class ClientHandler extends Thread{
                     Router.requestQueue.add(message);
                 } else if (message.type == 5) { //hello ack
                     Router.helloAckQueue.add(message);
+                } else if (message.type == 6) {
+                    Router.fileQueue.add(message);
                 }
             }
         }

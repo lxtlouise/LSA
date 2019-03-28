@@ -1,10 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -178,11 +175,10 @@ public class UI {
                 ArrayList<Integer> temp = entry.getValue();
                 int value = Integer.MAX_VALUE;
                 if (temp != null && temp.size() != 0) {
-                    System.out.println(key + " " + temp);
                     value = temp.get(temp.size() - 2);
                 }
                 if(value == Integer.MAX_VALUE) {
-                    continue;
+                    result.put(graph.getLabel(key), "--");
                 } else {
                     result.put(graph.getLabel(key), graph.getLabel(value));
                 }
@@ -280,11 +276,32 @@ public class UI {
         WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
         ArrayList<Integer> result = routing.Dijkstra(Router.routerID, destination);
         String path = routing.getShortestPath(result);
-        String[] p = path.split("->");
-        String routerID = Router.routerID;
-        for(int i = 1; i < p.length; i++) {
-            String neighborID = p[i];
+        String[] p = path.split(" -> ");
+        for (int i = 0; i < p.length; i++) {
+            System.out.println(p[i]);
         }
-
+        String routerID = Router.routerID;
+        Packet filePacket = new Packet();
+//        byte[] content = new byte[4096];
+        try {
+            byte[] content = Files.readAllBytes(new File(fileName).toPath());
+            filePacket.type = 6;
+            filePacket.path = p;
+            filePacket.srcAddress = Router.routerID;
+            filePacket.file = content;
+            filePacket.destAddress = p[1];
+            filePacket.destPort = UI.routerList.get(p[1]);
+            filePacket.pathIndex = 1;
+            filePacket.fileName = fileName;
+            Socket socket = new Socket(InetAddress.getByName(filePacket.destAddress), filePacket.destPort);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(filePacket);
+            System.out.println("send file to " + filePacket.destAddress);
+            socket.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

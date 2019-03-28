@@ -29,6 +29,7 @@ public class Router {
     public static List<Packet> lsaSendQueue; //for forwarding lsa
     public static List<Packet> requestQueue;
     public static List<Packet> helloAckQueue;
+    public static List<Packet> fileQueue;
 
     ServerSocket serverSocket;
     public static ClientHandler clientHandler;
@@ -43,6 +44,7 @@ public class Router {
     UpdateLSDB updateLSDB;
     public static CheckRouterAlive checkRouterAlive;
     public static HelloAckHandler helloAckHandler;
+    public static FileHandler fileHandler;
 
     public Router(String routerID, int port, List<String> neighborsName) throws IOException {
         this.routerID = routerID;
@@ -78,6 +80,7 @@ public class Router {
         lsaSendQueue = Collections.synchronizedList(new ArrayList<Packet>());
         requestQueue = Collections.synchronizedList(new ArrayList<Packet>());
         helloAckQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        fileQueue = Collections.synchronizedList(new ArrayList<Packet>());
 
         serverSocket = new ServerSocket(port, 0, InetAddress.getByName(routerID));
         serverThread = new ServerThread(serverSocket, this);
@@ -115,6 +118,9 @@ public class Router {
 
         helloAckHandler = new HelloAckHandler();
         helloAckHandler.start();
+
+        fileHandler = new FileHandler();
+        fileHandler.start();
     }
 
 }
