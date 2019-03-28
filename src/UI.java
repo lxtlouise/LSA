@@ -77,11 +77,14 @@ public class UI {
     }
 
     public static void help() {
+        System.out.println("Before selecting other options, select (5) to ping first");
         System.out.println("(a) Select (1) to show the shortest path between source and target. Enter server names for both source and target.");
         System.out.println("(b) Select (2) to remove link. Enter server names for both source and neighbor ID.");
         System.out.println("(c) Select (3) to add link. Enter server names for both source and neighbor ID.");
         System.out.println("(d) Select (4) to display routing table for particular router. Enter server names for router.");
-        System.out.println("(e) Select (5) to ping neighbors. ");
+        System.out.println("(e) Select (5) to ping neighbors.");
+        System.out.println("(f) Select (6) to stop the router.");
+        System.out.println("(g) Select (7) to transfer a file.");
     }
 
 
