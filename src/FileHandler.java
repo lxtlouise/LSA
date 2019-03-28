@@ -29,7 +29,7 @@ public class FileHandler extends Thread {
                         e.printStackTrace();
                     }
                 } else {
-                    System.out.println("send file to next hop");
+//                    System.out.println("send file to next hop");
                     Packet file = p;
                     file.pathIndex = pathIndex++;
                     file.srcAddress = Router.routerID;
@@ -50,9 +50,16 @@ public class FileHandler extends Thread {
             try {
                 this.sleep(30000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                if(!running){
+                    break;
+                }
             }
 
         }
+    }
+
+    public synchronized void shutdown(){
+        this.running = false;
+        interrupt();
     }
 }

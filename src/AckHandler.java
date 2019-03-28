@@ -12,7 +12,7 @@ public class AckHandler extends  Thread {
         while (isRunning()) {
             while(!Router.ackQueue.isEmpty()) {
                 Packet p = Router.ackQueue.remove(Router.ackQueue.size() - 1);
-                System.out.println("get ack from " + p.type + " " + p.srcAddress + " " + p.srcPort);
+//                System.out.println("get ack from " + p.type + " " + p.srcAddress + " " + p.srcPort);
                 String neighborID = p.srcAddress;
                 int neighborPort = p.srcPort;
                 String routerID = p.destAddress;

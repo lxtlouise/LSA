@@ -26,7 +26,7 @@ public class LSASendHandler extends Thread {
                         Socket socket = new Socket(InetAddress.getByName(neighborID), neighborPort);
                         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                         out.writeObject(p);
-                        System.out.println("forward lsa");
+//                        System.out.println("forward lsa");
                         if (Router.ackTable.contains(lsaID)) {
                             Router.ackTable.get(lsaID).remove(neighborID);
                             Router.ackTable.get(lsaID).put(neighborID, "10"); //update to send and wait for ack
@@ -42,7 +42,7 @@ public class LSASendHandler extends Thread {
                         Packet resend = new Packet();
                         resend.cost = (int) System.currentTimeMillis();
                         Router.lsaSendQueue.add(resend);
-                        System.out.println("resend lsa");
+//                        System.out.println("resend lsa");
                     }
                 } else {
                     continue;
@@ -81,7 +81,7 @@ public class LSASendHandler extends Thread {
             lsaF.cost = (int) System.currentTimeMillis();
             if(InetAddress.getByName(lsaF.srcAddress).isReachable(50000)) {
                 Router.lsaSendQueue.add(lsaF);
-                System.out.println("broadcast lsa");
+//                System.out.println("broadcast lsa");
             }
             if(Router.ackTable.containsKey(Router.routerID)) {
                 ConcurrentHashMap<String, String> inner = Router.ackTable.get(Router.routerID);
@@ -102,8 +102,5 @@ public class LSASendHandler extends Thread {
         interrupt();
     }
 
-    public synchronized void restart() {
-        this.running = true;
-    }
 
 }

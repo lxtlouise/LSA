@@ -13,7 +13,7 @@ public class UpdateRoutingTable extends Thread {
                 this.sleep(30000);
                 Router.old_routingTable = Router.new_routingTable;
                 Router.new_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>();
-                System.out.println("update routing table");
+//                System.out.println("update routing table");
             } catch (InterruptedException e) {
                 if(!isRunning()){
                     break;

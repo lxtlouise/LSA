@@ -18,12 +18,12 @@ public class ServerThread extends Thread{
             Socket clientSocket = null;
             try {
                 clientSocket = serverSocket.accept();
-                System.out.println(router  + "server socket accept " + clientSocket.getPort());
+//                System.out.println(router  + "server socket accept " + clientSocket.getPort());
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
                 Packet p = (Packet)in.readObject();
                 p.srcPort = clientSocket.getPort();
                 Router.receiveQueue.add(p);
-                System.out.println("recieve queue size: " + clientSocket.getPort() + " " + router.receiveQueue.size());
+//                System.out.println("recieve queue size: " + clientSocket.getPort() + " " + router.receiveQueue.size());
 //                clientSocket.close();
             } catch (IOException e){
                 e.printStackTrace();

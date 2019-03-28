@@ -89,7 +89,6 @@ public class UI {
         int port = routerList.get(routerID); //enter the router that we want to start
         List<String> n = neighbors.get(routerID);
         Router router = new Router(routerID, port, n); //only start one router
-//        routers.put(routerID, router);
     }
 
     public static void Ping(String routerID) throws IOException, ClassNotFoundException {
@@ -163,9 +162,6 @@ public class UI {
 
     public static void routingTable() {
         try {
-//            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.old_routingTable.entrySet()) {
-//                System.out.println(entry.getKey() + " " + entry.getValue());
-//            }
             Routing routing = new Routing();
             WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
             HashMap<Integer, ArrayList<Integer>> path = routing.dijkstra(Router.routerID);
@@ -186,11 +182,12 @@ public class UI {
             }
 
             if(!result.isEmpty()) {
+                System.out.println("Destination              Next Hop");
                 for (Map.Entry<String, String> entry : result.entrySet()) {
                     System.out.println(entry.getKey() + " " + entry.getValue());
                 }
             } else {
-                System.out.println("");
+                System.out.println("Destination              Next Hop");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -282,7 +279,6 @@ public class UI {
         }
         String routerID = Router.routerID;
         Packet filePacket = new Packet();
-//        byte[] content = new byte[4096];
         try {
             byte[] content = Files.readAllBytes(new File(fileName).toPath());
             filePacket.type = 6;

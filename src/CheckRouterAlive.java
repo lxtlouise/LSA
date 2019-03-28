@@ -27,16 +27,16 @@ public class CheckRouterAlive extends Thread {
     }
 
     public void checkAlive() throws IOException {
-        System.out.println("check aliveness");
+//        System.out.println("check aliveness");
         int timeout = 50000;
         for(Map.Entry<String, HelloNode> entry : Router.helloAck.entrySet()){
             String neighborID = entry.getKey();
             HelloNode hn = entry.getValue();
             int time = (int)System.currentTimeMillis() - hn.sendTime;
-            System.out.println(hn.neighborID + " " + hn.ack + " " + hn.counter + " " + time);
+//            System.out.println(hn.neighborID + " " + hn.ack + " " + hn.counter + " " + time);
             Socket socket = null;
             if (hn.counter < 3 && hn.ack.equals("pending") && time > timeout) {
-                System.out.println("time lag is " + time);
+//                System.out.println("time lag is " + time);
                 Packet resend = new Packet();
                 resend.type = 0;
                 resend.srcAddress = Router.routerID;
@@ -49,7 +49,7 @@ public class CheckRouterAlive extends Thread {
                 socket = new Socket(InetAddress.getByName(neighborID), resend.destPort);
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 out.writeObject(resend);
-                System.out.println("resend hello " + hn.counter);
+//                System.out.println("resend hello " + hn.counter);
             }
             if (hn.counter >= 3 && hn.ack.equals("pending")) {
                 System.out.println ("neighbor is down " + neighborID);
@@ -82,10 +82,6 @@ public class CheckRouterAlive extends Thread {
     public synchronized void shutdown(){
         this.running = false;
         interrupt();
-    }
-
-    public synchronized void restart() {
-        this.running = true;
     }
 
 }

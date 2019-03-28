@@ -36,8 +36,8 @@ public class HelloHandler extends Thread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("get hello from: " + neighborID);
-                System.out.println("send hello ack to: " + neighborID);
+//                System.out.println("get hello from: " + neighborID);
+//                System.out.println("send hello ack to: " + neighborID);
             }
 
 
@@ -66,17 +66,18 @@ public class HelloHandler extends Thread {
             hello.destPort = UI.routerList.get(neighborID);
             hello.cost = (int) System.currentTimeMillis();
             HelloNode hn = Router.helloAck.get(neighborID);
-            if (!hn.ack.equals("pending")) {
-                hn.sendTime = hello.cost;
-                hn.counter = 0;
-                hn.ack = "pending";
-                Socket socket = new Socket(InetAddress.getByName(neighborID), hello.destPort);
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                out.writeObject(hello);
-                System.out.println("broadcast hello to: " + neighborID);
-                socket.close();
+            if(InetAddress.getByName(neighborID).isReachable(50000)) {
+                if (!hn.ack.equals("pending")) {
+                    hn.sendTime = hello.cost;
+                    hn.counter = 0;
+                    hn.ack = "pending";
+                    Socket socket = new Socket(InetAddress.getByName(neighborID), hello.destPort);
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeObject(hello);
+//                    System.out.println("broadcast hello to: " + neighborID);
+                    socket.close();
+                }
             }
-
         }
     }
     
@@ -87,8 +88,5 @@ public class HelloHandler extends Thread {
         interrupt();
     }
 
-    public synchronized void restart() {
-        this.running = true;
-    }
 
 }

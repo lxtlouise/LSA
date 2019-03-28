@@ -15,7 +15,7 @@ public class HelloAckHandler extends Thread {
                     HelloNode hn = Router.helloAck.get(neighborID);
                     hn.ack = "true";
                     hn.counter = 0;
-                    System.out.println("get hello ack from: " + neighborID);
+//                    System.out.println("get hello ack from: " + neighborID);
                 } else {
                     continue;
                 }
@@ -38,7 +38,4 @@ public class HelloAckHandler extends Thread {
         interrupt();
     }
 
-    public synchronized void restart() {
-        this.running = true;
-    }
 }
