@@ -166,9 +166,9 @@ public class UI {
 
     public static void routingTable() {
         try {
-            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.old_routingTable.entrySet()) {
-                System.out.println(entry.getKey() + " " + entry.getValue());
-            }
+//            for (Map.Entry<String, ConcurrentHashMap<String, Integer>> entry : Router.old_routingTable.entrySet()) {
+//                System.out.println(entry.getKey() + " " + entry.getValue());
+//            }
             Routing routing = new Routing();
             WeightedGraph graph = routing.buildGraph(Router.old_routingTable);
             HashMap<Integer, ArrayList<Integer>> path = routing.dijkstra(Router.routerID);
@@ -181,11 +181,20 @@ public class UI {
                     System.out.println(key + " " + temp);
                     value = temp.get(temp.size() - 2);
                 }
-                result.put(graph.getLabel(key), graph.getLabel(value));
+                if(value == Integer.MAX_VALUE) {
+                    continue;
+                } else {
+                    result.put(graph.getLabel(key), graph.getLabel(value));
+                }
 
             }
-            for (Map.Entry<String, String> entry: result.entrySet()) {
-                System.out.println(entry.getKey() + " " + entry.getValue());
+
+            if(!result.isEmpty()) {
+                for (Map.Entry<String, String> entry : result.entrySet()) {
+                    System.out.println(entry.getKey() + " " + entry.getValue());
+                }
+            } else {
+                System.out.println("");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -244,7 +253,7 @@ public class UI {
             p.destAddress = UI.neighbors.get(router).get(i);
             p.srcAddress = Router.routerID;
             p.destPort = UI.routerList.get(p.destAddress);
-            Router.lsaQueue.add(p);
+            Router.lsaQueue.add(0, p);
             System.out.println("forward link failure");
         }
     }

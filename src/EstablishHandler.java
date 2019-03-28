@@ -13,7 +13,7 @@ public class EstablishHandler extends Thread {
     public void run() {
         while (isRunning()) {
             while (!Router.requestQueue.isEmpty()) {
-                Packet p = Router.requestQueue.remove();
+                Packet p = Router.requestQueue.remove(Router.requestQueue.size() - 1);
                 String neighborID = p.srcAddress;
                 String routerID = p.destAddress;
                 if (p.count == 0) {
@@ -52,7 +52,7 @@ public class EstablishHandler extends Thread {
                         lsaF.destAddress = ng;
                         lsaF.destPort = UI.routerList.get(ng);
                         lsaF.lsa = Router.lsa;
-                        Router.lsaSendQueue.add(lsaF);
+                        Router.lsaSendQueue.add(0, lsaF);
                     }
                     Packet confirm = new Packet();
                     confirm.type = 4;
@@ -88,7 +88,7 @@ public class EstablishHandler extends Thread {
                         lsaF.destAddress = ng;
                         lsaF.destPort = UI.routerList.get(ng);
                         lsaF.lsa = Router.lsa;
-                        Router.lsaSendQueue.add(lsaF);
+                        Router.lsaSendQueue.add(0, lsaF);
                     }
                 }
 

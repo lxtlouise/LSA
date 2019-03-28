@@ -20,7 +20,7 @@ public class LSAHandler extends Thread {
             while (!Router.lsaQueue.isEmpty()) {
                 boolean update = false;
                 LSA acklsa = null;
-                Packet p = Router.lsaQueue.remove();
+                Packet p = Router.lsaQueue.remove(Router.lsaQueue.size() - 1);
                 LSA newlsa = p.lsa;
                 String neighborID = p.srcAddress;
                 int neighborPort = p.srcPort;

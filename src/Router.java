@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,14 +21,14 @@ public class Router {
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>> new_routingTable;
     public static ConcurrentHashMap<String, HelloNode> helloAck;
 
-    public static ConcurrentLinkedQueue<Packet> receiveQueue; //need circular queue
-    public static ConcurrentLinkedQueue<Packet> lsaQueue;
-    public static ConcurrentLinkedQueue<Packet> helloQueue;
-    public static ConcurrentLinkedQueue<Packet> pingQueue;
-    public static ConcurrentLinkedQueue<Packet> ackQueue;
-    public static ConcurrentLinkedQueue<Packet> lsaSendQueue; //for forwarding lsa
-    public static ConcurrentLinkedQueue<Packet> requestQueue;
-    public static ConcurrentLinkedQueue<Packet> helloAckQueue;
+    public static List<Packet> receiveQueue; //need circular queue
+    public static List<Packet> lsaQueue;
+    public static List<Packet> helloQueue;
+    public static List<Packet> pingQueue;
+    public static List<Packet> ackQueue;
+    public static List<Packet> lsaSendQueue; //for forwarding lsa
+    public static List<Packet> requestQueue;
+    public static List<Packet> helloAckQueue;
 
     ServerSocket serverSocket;
     public static ClientHandler clientHandler;
@@ -69,14 +70,14 @@ public class Router {
         old_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>(); //<routerID, <neighborID, cost>>
         new_routingTable = new ConcurrentHashMap<String, ConcurrentHashMap<String, Integer>>();
 
-        receiveQueue = new ConcurrentLinkedQueue<>();
-        lsaQueue = new ConcurrentLinkedQueue<>();
-        helloQueue = new ConcurrentLinkedQueue<>();
-        pingQueue = new ConcurrentLinkedQueue<>();
-        ackQueue = new ConcurrentLinkedQueue<>();
-        lsaSendQueue = new ConcurrentLinkedQueue<>();
-        requestQueue = new ConcurrentLinkedQueue<>();
-        helloAckQueue = new ConcurrentLinkedQueue<>();
+        receiveQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        lsaQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        helloQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        pingQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        ackQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        lsaSendQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        requestQueue = Collections.synchronizedList(new ArrayList<Packet>());
+        helloAckQueue = Collections.synchronizedList(new ArrayList<Packet>());
 
         serverSocket = new ServerSocket(port, 0, InetAddress.getByName(routerID));
         serverThread = new ServerThread(serverSocket, this);

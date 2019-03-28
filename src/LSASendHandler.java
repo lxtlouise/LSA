@@ -16,7 +16,7 @@ public class LSASendHandler extends Thread {
     public void run() {
         while (isRunning()) {
             while (!Router.lsaSendQueue.isEmpty()) {
-                Packet p = Router.lsaSendQueue.remove();
+                Packet p = Router.lsaSendQueue.remove(Router.lsaSendQueue.size() - 1);
                 String neighborID = p.destAddress;
                 int neighborPort = p.destPort;
                 String lsaID = p.lsa.routerID;

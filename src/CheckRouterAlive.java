@@ -69,7 +69,7 @@ public class CheckRouterAlive extends Thread {
                     change.destAddress = ngID;
                     change.lsa = Router.lsa;
                     change.lsa.sequence++;
-                    Router.lsaSendQueue.add(change);
+                    Router.lsaSendQueue.add(0, change);
                     System.out.println("router down, broadcast change using lsa");
                 }
             }

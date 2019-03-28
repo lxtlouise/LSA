@@ -9,7 +9,7 @@ public class PingHandler extends Thread {
         while (isRunning()) {
             while (!Router.pingQueue.isEmpty()) {
                 System.out.println("start to process ping");
-                Packet p = Router.pingQueue.remove();
+                Packet p = Router.pingQueue.remove(Router.pingQueue.size() - 1);
                 String neighborID = p.srcAddress;
                 int neighborPort = p.srcPort;
                 System.out.println("neighbor port " + neighborPort);

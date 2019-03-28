@@ -20,7 +20,7 @@ public class HelloHandler extends Thread {
     public void run() {
         while (isRunning()) {
             while(!Router.helloQueue.isEmpty()) {
-                Packet p = Router.helloQueue.remove();
+                Packet p = Router.helloQueue.remove(Router.helloQueue.size() - 1);
                 String neighborID = p.srcAddress;
                 int neighborPort = UI.routerList.get(neighborID);
                 Packet helloAck = new Packet();

@@ -8,7 +8,7 @@ public class HelloAckHandler extends Thread {
     public void run() {
         while (isRunning()) {
             while (!Router.helloAckQueue.isEmpty()) {
-                Packet helloAck = Router.helloAckQueue.remove();
+                Packet helloAck = Router.helloAckQueue.remove(Router.helloAckQueue.size() - 1);
                 String neighborID = helloAck.srcAddress;
                 int neighborPort = UI.routerList.get(neighborID);
                 if(Router.helloAck.containsKey(neighborID)) {
