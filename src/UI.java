@@ -85,6 +85,7 @@ public class UI {
         System.out.println("(e) Select (5) to ping neighbors.");
         System.out.println("(f) Select (6) to stop the router.");
         System.out.println("(g) Select (7) to transfer a file.");
+        System.out.println("(h) Select (0) to exit the program.");
     }
 
 
