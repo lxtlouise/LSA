@@ -29,15 +29,19 @@ public class HelloHandler extends Thread {
                 helloAck.destAddress = neighborID;
                 helloAck.srcAddress = Router.routerID;
                 helloAck.cost = (int)System.currentTimeMillis();
-                try {
-                    Socket socket = new Socket(InetAddress.getByName(neighborID), neighborPort);
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    out.writeObject(helloAck);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if(Router.neighbors.containsKey(neighborID)) {
+                    try {
+                        Socket socket = new Socket(InetAddress.getByName(neighborID), neighborPort);
+                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                        out.writeObject(helloAck);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 //                System.out.println("get hello from: " + neighborID);
 //                System.out.println("send hello ack to: " + neighborID);
+                } else {
+                    continue;
+                }
             }
 
 
@@ -48,14 +52,12 @@ public class HelloHandler extends Thread {
                 if(!running){
                     break;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
     }
 
-    public void broadcast() throws IOException {
+    public void broadcast() {
         List<String> ng = UI.neighbors.get(Router.routerID);
         for (int i = 0; i < ng.size(); i++) {
             Packet hello = new Packet();
@@ -66,17 +68,21 @@ public class HelloHandler extends Thread {
             hello.destPort = UI.routerList.get(neighborID);
             hello.cost = (int) System.currentTimeMillis();
             HelloNode hn = Router.helloAck.get(neighborID);
-            if(InetAddress.getByName(neighborID).isReachable(50000)) {
-                if (!hn.ack.equals("pending")) {
-                    hn.sendTime = hello.cost;
-                    hn.counter = 0;
-                    hn.ack = "pending";
-                    Socket socket = new Socket(InetAddress.getByName(neighborID), hello.destPort);
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    out.writeObject(hello);
-//                    System.out.println("broadcast hello to: " + neighborID);
-                    socket.close();
+            try {
+                if(InetAddress.getByName(neighborID).isReachable(50000)) {
+                    if (!hn.ack.equals("pending")) {
+                        hn.sendTime = hello.cost;
+                        hn.counter = 0;
+                        hn.ack = "pending";
+                        Socket socket = new Socket(InetAddress.getByName(neighborID), hello.destPort);
+                        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                        out.writeObject(hello);
+    //                    System.out.println("broadcast hello to: " + neighborID);
+                        socket.close();
+                    }
                 }
+            } catch (IOException e) {
+//                e.printStackTrace();
             }
         }
     }

@@ -36,7 +36,7 @@ public class LSASendHandler extends Thread {
                         }
                         socket.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+//                        e.printStackTrace();
                     }
                     if (Router.ackTable.get(lsaID).get(neighborID).equals("10") && (int) (System.currentTimeMillis() - p.cost) > 100000) {
                         Packet resend = new Packet();
@@ -79,7 +79,7 @@ public class LSASendHandler extends Thread {
             lsaF.destPort = ngPort;
             lsaF.lsa = newlsa;
             lsaF.cost = (int) System.currentTimeMillis();
-            if(InetAddress.getByName(lsaF.srcAddress).isReachable(50000)) {
+            if(InetAddress.getByName(lsaF.destAddress).isReachable(50000)) {
                 Router.lsaSendQueue.add(lsaF);
 //                System.out.println("broadcast lsa");
             }
